@@ -15,6 +15,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  // contactNumber: { type: String, unique: true },
+  isVerified: { type: Boolean, required: true, default: false },
+  about: { type: String, required: false },
+  otp: {
+    code: { type: String, required: true },
+    expiry: { type: Date, required: true },
+  },
 });
 
 const userModel = mongoose.model("users", userSchema);
