@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const userModel = require("../models/userModel");
 const { sendOTPviaMail } = require("../services/nodemailer");
 const { generateOTP } = require("../helpers/helpers");
+const { uploadToCloudinary } = require("../config/Cloudinary");
 
 const userRegister = async (req, res) => {
   try {
@@ -152,38 +153,16 @@ const userLogin = async (req, res) => {
   }
 };
 
-const userGetDetails = async (req, res) => {
-  try {
-    let userId = req.params.userId;
-    let userId2 = req.userId;
-    console.log(userId);
-    console.log(userId2);
-    const userData = await userModel.findOne({ _id: userId });
-    if (!userData)
-      return res
-        .status(404)
-        .json({ success: false, message: "not data found" });
-    return res
-      .status(200)
-      .json({ success: true, message: "data obtained", userData });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ success: false, error: "Server Error" });
-  }
-};
-
 const editProfile = async (req, res) => {
   try {
-    const url = req.file.path;
-    const { username, github, linkedin, about } = req.body;
-    const data = await uploadToCloudinary(url, "profile");
-    const image = data.url;
-    const id = req.userId;
+    const {userId, username, contact, about } = req.body;
+    console.log(req.body);
     const updatedUser = await userModel.findOneAndUpdate(
-      { _id: id },
-      { username, image, github, linkedin, about },
+      { _id: userId },
+      { username, contact, about },
       { new: true }
     );
+    console.log(updatedUser);
     if (!updatedUser) {
       return res.status(404).json({ success: false, error: "User not found." });
     }
@@ -195,11 +174,37 @@ const editProfile = async (req, res) => {
   }
 };
 
+const imageUpload = async(req,res)=>{
+  try {
+    const {userId}=req.body
+    console.log(req.body);
+    const url = req.file.path;
+     const data = await uploadToCloudinary(url, "profile");
+    const image = data.url;
+    console.log(image);
+    const updatedUser = await userModel.findOneAndUpdate(
+      { _id: userId },
+      { imageUrl:image},
+      { new: true }
+    );
+    console.log(updatedUser);
+    if (!updatedUser) {
+      return res.status(404).json({ success: false, error: "User not found." });
+    }
+    return res
+      .status(200)
+      .json({ success: true, user: updatedUser, message: "Profile Updated" });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: "Server Error" });
+    
+  }
+}
+
 module.exports = {
   userRegister,
   userLogin,
-  userGetDetails,
   verifyOTP,
   sendOTP,
-  editProfile
+  editProfile,
+  imageUpload
 };
