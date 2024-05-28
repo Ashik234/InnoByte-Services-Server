@@ -7,7 +7,7 @@ const userRouter = require("./routes/userRouter")
 app.use(express.json())
 
 app.use(cors({
-    origin:["http://localhost:5173","https://dignizant-technologies-client.vercel.app/"],
+    origin:["http://localhost:5173","https://https://inno-byte-services-client.vercel.app/"],
     methods:["GET","POST"],
     credentials:true
 }))
