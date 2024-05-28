@@ -8,8 +8,4 @@ async function generateOTP() {
   return otp;
 }
 
-async function checkIfUsernameExists(username) {
-  return (await userModel.findOne({ username: username })) != null;
-}
-
-module.exports = { generateOTP, usernameGenerator };
+module.exports = { generateOTP };
