@@ -14,7 +14,7 @@ app.use(cors({
 
 app.use("/",userRouter)
 
-const port = process.env.port
+const port = process.env.PORT
 app.listen(port,()=>{
     console.log(`Server Started Running On Port ${port}`);
 })
