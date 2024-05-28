@@ -156,13 +156,11 @@ const userLogin = async (req, res) => {
 const editProfile = async (req, res) => {
   try {
     const {userId, username, contact, about } = req.body;
-    console.log(req.body);
     const updatedUser = await userModel.findOneAndUpdate(
       { _id: userId },
       { username, contact, about },
       { new: true }
     );
-    console.log(updatedUser);
     if (!updatedUser) {
       return res.status(404).json({ success: false, error: "User not found." });
     }
@@ -177,17 +175,14 @@ const editProfile = async (req, res) => {
 const imageUpload = async(req,res)=>{
   try {
     const {userId}=req.body
-    console.log(req.body);
     const url = req.file.path;
      const data = await uploadToCloudinary(url, "profile");
     const image = data.url;
-    console.log(image);
     const updatedUser = await userModel.findOneAndUpdate(
       { _id: userId },
       { imageUrl:image},
       { new: true }
     );
-    console.log(updatedUser);
     if (!updatedUser) {
       return res.status(404).json({ success: false, error: "User not found." });
     }

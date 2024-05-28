@@ -8,18 +8,6 @@ async function generateOTP() {
   return otp;
 }
 
-async function usernameGenerator(name) {
-  let username = "";
-  const firstName = name.split(" ")[0]; // Get the first name
-
-  do {
-    const randomNumber = Math.floor(Math.random() * 1000);
-    username = `${firstName}${randomNumber}`;
-  } while (await checkIfUsernameExists(username)); // Check if the username exists
-
-  return username;
-}
-
 async function checkIfUsernameExists(username) {
   return (await userModel.findOne({ username: username })) != null;
 }

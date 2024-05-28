@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  contact: { type: Number, unique: true },
+  contact: { type: Number },
   isVerified: { type: Boolean, required: true, default: false },
   about: { type: String, required: false },
   otp: {

@@ -1,6 +1,5 @@
 const nodemailer = require("nodemailer");
 
-
 const transporter = nodemailer.createTransport({
   service: "gmail",
   port: 587,
@@ -14,7 +13,7 @@ const transporter = nodemailer.createTransport({
 const sendOTPviaMail = async (to, otp) => {
   const mailOptions = {
     from: `"InnoByte Services" <${process.env.GMAIL}>`,
-    to: "ashikash796@gmail.com",
+    to: to,
     subject: "Welcome to InnoByte Services",
     html: `<!DOCTYPE html>
     <html>
@@ -36,12 +35,13 @@ const sendOTPviaMail = async (to, otp) => {
                                             <div style="color: rgb(0, 0, 0); text-align: left;">
                                                 <h1 style="margin: 1rem 0">Verification code</h1>
                                                 <p style="padding-bottom: 16px">Please use the verification code below to verify.</p>
-                                                <p style="font-size: 130%; text-align: center; color: #fd7014; padding: 20px; margin: 10px 0; font-weight: bold;">${otp}</p>
+                                                <p style="font-size: 130%; text-align: center; color: #007bff; padding: 20px; margin: 10px 0; font-weight: bold;">${otp}</p>
                                                 <p style="padding-bottom: 16px">If you didn’t request this, you can ignore this email.</p>
                                                 <p style="padding-bottom: 16px">Thanks,<br>The InnoByte Services team</p>
                                             </div>
                                         </div>
                                         <div style="padding-top: 20px; color: rgb(153, 153, 153); text-align: center;">
+                                            <img src="YOUR_LOGO_URL_HERE" alt="InnoByte Services Logo" style="width: 100px; height: auto;">
                                         </div>
                                     </td>
                                 </tr>
@@ -58,7 +58,7 @@ const sendOTPviaMail = async (to, otp) => {
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      console.log(error,"ddd");
+      console.log(error);
     } else {
       console.log("Email sent: " + info.response);
     }
