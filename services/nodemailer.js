@@ -37,7 +37,7 @@ const sendOTPviaMail = async (to, otp) => {
                                                 <p style="padding-bottom: 16px">Please use the verification code below to verify.</p>
                                                 <p style="font-size: 130%; text-align: center; color: #007bff; padding: 20px; margin: 10px 0; font-weight: bold;">${otp}</p>
                                                 <p style="padding-bottom: 16px">If you didn’t request this, you can ignore this email.</p>
-                                                <p style="padding-bottom: 16px">Thanks,<br>The InnoByte Services team</p>
+                                                <p style="padding-bottom: 16px">Thanks,<br>InnoByte Services team</p>
                                             </div>
                                         </div>
                                         <div style="padding-top: 20px; color: rgb(153, 153, 153); text-align: center;">

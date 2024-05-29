@@ -129,6 +129,46 @@ const userLogin = async (req, res) => {
   }
 };
 
+const sendOTP = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email)
+      return res
+        .status(400)
+        .json({ success: false, message: "Email is required" });
+
+    const isUserExist = (await userModel.countDocuments({ email: email })) > 0;
+
+    if (!isUserExist)
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
+
+    const otp = await generateOTP();
+    sendOTPviaMail(email, otp);
+
+    await userModel.findOneAndUpdate(
+      { email: email },
+      {
+        $set: {
+          otp: {
+            code: otp,
+            expiry: Date.now() + 60000,
+          },
+        },
+      }
+    );
+
+    return res
+      .status(200)
+      .json({ success: true, message: "OTP successfully sent" });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
 const editProfile = async (req, res) => {
   try {
     const { userId, username, contact, about } = req.body;
@@ -174,6 +214,7 @@ module.exports = {
   userRegister,
   userLogin,
   verifyOTP,
+  sendOTP,
   editProfile,
   imageUpload,
 };
