@@ -41,7 +41,7 @@ const sendOTPviaMail = async (to, otp) => {
                                             </div>
                                         </div>
                                         <div style="padding-top: 20px; color: rgb(153, 153, 153); text-align: center;">
-                                            <img src="YOUR_LOGO_URL_HERE" alt="InnoByte Services Logo" style="width: 100px; height: auto;">
+                                            <img src="https://media.licdn.com/dms/image/D560BAQGqQE-xTODoGA/company-logo_200_200/0/1708108358962/innobyte_services_logo?e=2147483647&v=beta&t=AKYAufKyxX7Li2E6V6y5iB9B3mDod4Wg8RVpCFLBzvU" alt="InnoByte Services Logo" style="width: 100px; height: auto;">
                                         </div>
                                     </td>
                                 </tr>

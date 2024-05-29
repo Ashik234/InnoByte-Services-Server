@@ -34,7 +34,7 @@ const userRegister = async (req, res) => {
         message: "Registration Completed Successfully",
         token,
         status: true,
-        user
+        user,
       });
     }
   } catch (error) {
@@ -63,6 +63,9 @@ const verifyOTP = async (req, res) => {
     } else if (user.otp.expiry.getTime() < Date.now()) {
       return res.status(401).json({ success: false, message: "OTP expired" });
     }
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: 6000000,
+    });
 
     if (!user.isVerified) {
       await userModel.findOneAndUpdate(
@@ -73,47 +76,7 @@ const verifyOTP = async (req, res) => {
 
     return res
       .status(200)
-      .json({ success: true, message: "Successfully Verified" });
-  } catch (err) {
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal server error" });
-  }
-};
-
-const sendOTP = async (req, res) => {
-  try {
-    const { email } = req.body;
-    if (!email)
-      return res
-        .status(400)
-        .json({ success: false, message: "Email is required" });
-
-    const isUserExist = (await userModel.countDocuments({ email: email })) > 0;
-
-    if (!isUserExist)
-      return res
-        .status(400)
-        .json({ success: false, message: "User not found" });
-
-    const otp = await generateOTP();
-    sendOTPviaMail(email, otp);
-
-    await userModel.findOneAndUpdate(
-      { email: email },
-      {
-        $set: {
-          otp: {
-            code: otp,
-            expiry: Date.now() + 60000,
-          },
-        },
-      }
-    );
-
-    return res
-      .status(200)
-      .json({ success: true, message: "OTP successfully sent" });
+      .json({ token, success: true, message: "Email Verified" });
   } catch (err) {
     return res
       .status(500)
@@ -128,9 +91,22 @@ const userLogin = async (req, res) => {
     if (exists) {
       const access = await bcrypt.compare(password.toString(), exists.password);
       if (access) {
+        const otp = await generateOTP();
+        sendOTPviaMail(email, otp);
         const token = jwt.sign({ userId: exists._id }, process.env.JWT_SECRET, {
           expiresIn: 6000000,
         });
+        await userModel.findOneAndUpdate(
+          { email: email },
+          {
+            $set: {
+              otp: {
+                code: otp,
+                expiry: Date.now() + 60000,
+              },
+            },
+          }
+        );
         return res.status(200).json({
           user: exists,
           token: token,
@@ -155,7 +131,7 @@ const userLogin = async (req, res) => {
 
 const editProfile = async (req, res) => {
   try {
-    const {userId, username, contact, about } = req.body;
+    const { userId, username, contact, about } = req.body;
     const updatedUser = await userModel.findOneAndUpdate(
       { _id: userId },
       { username, contact, about },
@@ -172,15 +148,15 @@ const editProfile = async (req, res) => {
   }
 };
 
-const imageUpload = async(req,res)=>{
+const imageUpload = async (req, res) => {
   try {
-    const {userId}=req.body
+    const { userId } = req.body;
     const url = req.file.path;
-     const data = await uploadToCloudinary(url, "profile");
+    const data = await uploadToCloudinary(url, "profile");
     const image = data.url;
     const updatedUser = await userModel.findOneAndUpdate(
       { _id: userId },
-      { imageUrl:image},
+      { imageUrl: image },
       { new: true }
     );
     if (!updatedUser) {
@@ -188,18 +164,16 @@ const imageUpload = async(req,res)=>{
     }
     return res
       .status(200)
-      .json({ success: true, user: updatedUser, message: "Profile Updated" });
+      .json({ success: true, user: updatedUser, message: "Image Updated" });
   } catch (error) {
     return res.status(500).json({ success: false, error: "Server Error" });
-    
   }
-}
+};
 
 module.exports = {
   userRegister,
   userLogin,
   verifyOTP,
-  sendOTP,
   editProfile,
-  imageUpload
+  imageUpload,
 };
